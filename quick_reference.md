@@ -113,7 +113,104 @@ A more formal definition that encompasses what the spirit of the process manager
 Process managers conform to the following:
 	- The `initialize` method receives all of the necessary information possible to perform the process
 		- Any necessary data organization should happen during the objects initialization step
+		- Prefer to use named parameters when initializing objects
 	- The entry point method `perform` is defined, and performs all of the methods necessary for the business task to be completed in a single method call
 		- A well written `perform` method will read almost like psuedo code when outlining each step that's being performed.
 	- Use read-only public accessor methods if the object is going to be used for anything other than returning a single result
+	- Use "middle managers" if your business process requires a secondary layer of business logic.
+
+## Process "Middle" Manager Conventions
+
+Just like process managers, these are objects that are in your codebase and represent your business process. As a middle manager, they typically are responsible for small parts of a larger process that has complex logic.
+
+- Middle managers _should be named spaced to the process manager_. These are not meant to be re-used across the code base, just as an organization tool in a large process.
+- Middle managers _do not_ use any other managers.
+
+# Framework Conventions
+
+These conventions have (amber)[https://amberframework.org] and (Ruby on Rails)[https://rubyonrails.org] in mind, but any RESTful routing app will tend to follow these well.
+
+- The standard `Create`, `Edit`, `Update` and `Destroy` will only effect a single resource object.
+- The typical `CRUD` actions should maintain the bare minimum logic to do the following:
+	- a single resource:
+		- Recieve whitelisted parameters
+		- update and validate the target object
+		- Render a response (successful or otherwise)
+	- multiple resources:
+		- Render a response with 0 or more of the desired resource (more commonly known as an index route)
+- Any non-RESTful routes should do the following:
+	- Recieve and validate any incoming parameters or request body
+	- Use a process manager to perform any logic required for the response
+	- Render a response (successful or otherwise)
+
+A well written Rails controller would look like the following:
+```ruby
+# app/controllers/customers_controller.rb
+class CustomersController < ApplicationController
+  def create
+    @customer = Customer.new(customer_params)
+    if @customer.save
+      render json: @customer, status: :created
+    else
+      render json: @customer.errors, status: :unprocessable_entity
+    end
+  end
+
+	def update_payment_and_subscription
+    customer = Customer.find(params[:id])
+    new_payment_method = params[:payment_method]
+
+    if customer && new_payment_method
+      process_manager = Billing::UpdateCustomerPaymentAndSubscription.new(
+        customer: customer, 
+        new_payment_method: new_payment_method
+      )
+      if process_manager.perform
+        render json: { message: 'Customer payment method and subscription updated successfully' }, status: :ok
+      else
+        render json: { error: 'Failed to update payment method and subscription' }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: 'Invalid parameters' }, status: :bad_request
+    end
+  end
+
+  private def customer_params
+    params.require(:customer).permit(:first_name, :last_name, :email)
+  end
+end
+```
+
+Here's the accompanying process manager:
+
+```ruby
+module Billing
+  class UpdateCustomerPaymentAndSubscription
+    attr_reader :customer, :new_payment_method
+
+    def initialize(customer:, new_payment_method:)
+      @customer = customer
+      @new_payment_method = new_payment_method
+    end
+
+    def perform
+      update_payment_method && update_subscription_status
+    end
+
+    private def update_payment_method
+      # Implement the logic to update the customer's payment method
+      customer.update(payment_method: new_payment_method)
+    end
+
+    private def update_subscription_status
+      # Implement the logic to update the customer's subscription status based on the new payment method
+      if customer.payment_method_valid?
+        customer.update(subscription_status: 'active')
+      else
+        customer.update(subscription_status: 'inactive')
+      end
+    end
+  end
+end
+```
 
