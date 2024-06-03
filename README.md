@@ -17,7 +17,7 @@ To begin with, we are going to start by more clearly defining what a `feature re
 
 Let's define some critical terminology before we move forward.
 
-**Operation**: the interaction with the AI agent and ensuring it has the correct knowledge and understanding 
+**Operation**: the interaction with the AI agent and ensuring it has the correct knowledge and understanding to perform.
 
 
 ## Our First Feature Request
@@ -56,4 +56,4 @@ For unRESTful end-points, the permissions are based on if the model type or spec
 
 ## Breakdown of The Anatomy of A Feature Request
 
-Feature requests
+TBD
