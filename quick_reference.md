@@ -1,6 +1,4 @@
-# Quick Reference 
-
-# AED Cheat Sheet
+# Quick Reference - AED Cheat Sheet
 
 This is a quick reference, please read the entire guide for more details.
 
