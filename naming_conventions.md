@@ -2,17 +2,18 @@
 
 `_This is a work in progress_`
 
-Naming conventions are one of the ways that drive the agent enhanced development workflow. The reason for this is that AI models use token windows to understand the context of things. 
+Naming conventions are one of the ways that drive the agent enhanced development workflow. The reason for this is that AI models use token windows to understand the context of things.&#x20;
 
 ## Basic Explanation of Tokens & Token Window
 
-AI models, specifically LLMs, use tokens to represent groups of text. For example the statement:  
+AI models, specifically LLMs, use tokens to represent groups of text. For example the statement:
 
 `I want to create a new user and assign them to an account.`
 
 For this example I’ll use Llama 3 to tokenize this prompt. When we tokenize this prompt, it turns into these tokens:
 
-`
+\`
+
 ```
 'I'
 ' want'
@@ -30,33 +31,28 @@ For this example I’ll use Llama 3 to tokenize this prompt. When we tokenize th
 '.'
 ```
 
-The extra spaces inside of the single quotes here is to highlight that spaces can be part of a token. Now when the AI model is scanning through the prompt, it’s going to read a group of tokens at a time, shifting down as it processes. For this example I’ll use a 8 token window, shifting 4 tokens at a time so there is some overlap.  
-  
-Starting token window
-`’I want to create a new user and’`
+The extra spaces inside of the single quotes here is to highlight that spaces can be part of a token. Now when the AI model is scanning through the prompt, it’s going to read a group of tokens at a time, shifting down as it processes. For this example I’ll use a 8 token window, shifting 4 tokens at a time so there is some overlap.
 
-Next token window
-`’ a new user and assign them to an’`
+Starting token window `’I want to create a new user and’`
 
-Final token window
-`‘ assign them to an account.’`
+Next token window `’ a new user and assign them to an’`
+
+Final token window `‘ assign them to an account.’`
 
 This window is typically larger than this, but for this example it illustrates how as the window shifts and the LLM model associates groups of tokens. This association is how the relationship of a flow of words is established and influences the direction that the model computes. This is why a naming convention needs to be very consistent.
-
 
 ## Patterns For Naming Conventions
 
 For this section I’m going to use the example of implementing the feature story from above:
 
-`I want to create a new user and assign them to an account.
-
+\`I want to create a new user and assign them to an account.
 
 ### The Rails Way - Conventions That Have Stood The Test of Time
 
-The Rails framework has lead the way with “convention over configuration” for well over a decade now. You can really feel the difference this makes in your productivity when getting started. However, once you deviate from the normal Rails conventions you’ll find that Rails can become very painful to work with. This typically happens with non-RESTful business logic being intermingled into what should only be a RESTful end-point.  
-  
-The Rails conventions would typically establish the following flow:  
-  
+The Rails framework has lead the way with “convention over configuration” for well over a decade now. You can really feel the difference this makes in your productivity when getting started. However, once you deviate from the normal Rails conventions you’ll find that Rails can become very painful to work with. This typically happens with non-RESTful business logic being intermingled into what should only be a RESTful end-point.
+
+The Rails conventions would typically establish the following flow:
+
 1. Assuming that the `UsersController` already exists, with the standard `create` action inside of it to handle a `POST` request
 2. You (the dev) would update the allowed params to add an `account_id` parameter that would be used to allow the user to be associated to the account.
 
@@ -83,8 +79,6 @@ The pattern that you choose is critical because it heavily influences the models
 
 Let’s start by looking at something that would generally be acceptable as “good code”.
 
-  
-
 ```crystal
 class Customer
   property name : String
@@ -95,7 +89,6 @@ class Customer
 
 end
 ```
-  
 
 Here we have the barest of minimums that represent a Customer for our new SaaS product. After all, this entire method is around building and maintaining products as they grow in complexity.
 
@@ -104,7 +97,6 @@ I am intentionally skipping persistence methods because this explanation is abou
 Our first job is going to be setting up subscriptions for Customers. A Customer can have many Subscriptions.
 
 So now we have a setup like this:
-
 
 ```crystal
 class Subscription
@@ -129,7 +121,6 @@ class Customer
 end
 ```
 
-
 At this point the relationship between the two objects is clear and the names are simple and imply their intended meaning. Our minds have mental models of what a Customer is and what a Subscription is because of our life experience. We can fill in the implications of what the property and its type mean. The `name` property is relatively clear.
 
 However, to an AI this kind of naming is less than ideal. It will probably still work, but will progressively become less and less useful as the classes grow in complexity.
@@ -138,7 +129,6 @@ Instead if we change to a more verbose naming convention that adds in contextual
 
 Let’s focus on the Customer class first and you’ll see what I mean.
 
-  
 ```crystal
 class Customer
   property first_name : String
@@ -151,8 +141,6 @@ class Customer
 
 end
 ```
-
-  
 
 You may have noticed that a lot has changed and at the same time, we changed very little.
 
@@ -169,7 +157,7 @@ Well the good news is that our little SaaS is growing up and now has more produc
 By the way, you have a super short window to implement so there’s no way to take time to architect this thoroughly and perform any data migrations.
 
 That’s alright, this type of feature request is the Achilles Heel of many code bases. Typically in this kind of scenario we start seeing naming becoming a challenge. Let’s see how we can do it so that it benefits our AI agent assistant, or how our agent would be implementing this feature if we let it drive for us.
-  
+
 ```crystal
 class Customer
   property first_name : String
@@ -199,34 +187,27 @@ class EnterpriseCustomerBillingEntity
 end
 ```
 
-
 We now have this new class mixed in that handles the enterprise details. This isn’t about programming the full workflow, it’s about the naming convention used here. A pattern is beginning to emerge.
 
 Now depending on your level of seniority as a dev, you may read those class attributes and think “yeah that’s basically what I would do, except I’d simplify the names a bit”. And this is when I can begin outlining the general rules to follow when writing code you want an AI assistant to flourish with:
 
-
-
-1. Object attributes with primitive types should be short statements or phrases
+1. Object attributes with primitive types should be short statements or phrases
 2. Object attributes that are booleans should be phrased as a “yes/no” question or statement
-3. Object attributes that are collections, Arrays or enumerable in some way. Usually it’s good to start the name like “list_of_” or “array_of_” with a descriptive name of the object types it’s holding.
-
-  
+3. Object attributes that are collections, Arrays or enumerable in some way. Usually it’s good to start the name like “list\_of\_” or “array\_of\_” with a descriptive name of the object types it’s holding.
 
 Following these guidelines will help keep your naming conventions consistent which helps provide clarity and contextual understanding for your AI agent. It’s also good for you, because you may come back to this code many months or years later and you will not remember the product meeting details but you can clearly read your code.
-
-  
 
 ### Method & Variable Naming
 
 Next let’s discuss method and variable naming. This is the most common area where devs can help themselves greatly, but typically fall short. Clever naming can make short variable names for easier readability but the context of what and why quickly disappears into your editors background.
 
-We left some of the business logic that was in our new feature requirement that we can use for this part. The part we are going to focus on is going to be: 
+We left some of the business logic that was in our new feature requirement that we can use for this part. The part we are going to focus on is going to be:
 
 `prevents these users from adding any subscription items`
 
 This is something that we can use a process manager to handle while exercising good naming conventions.
-  
-This is a process manager, but it does not use “process” or “manager” in the name. It is acceptable with or without including those details. 
+
+This is a process manager, but it does not use “process” or “manager” in the name. It is acceptable with or without including those details.&#x20;
 
 ```crystal
 class AddSubscriptionToCustomer
@@ -243,11 +224,10 @@ class AddSubscriptionToCustomer
   end
 end
 ```
-  
 
 1. The class name for the process manager clearly states what the entire process is attempting to do in a short statement.
 2. The initialize method accepts all of the initial data required to perform the process
-3. The name of the method to start the process is clear and obvious. 
+3. The name of the method to start the process is clear and obvious.&#x20;
 
 This reads very plainly now. The logic in the `return` line reads almost like a complete sentence. This makes the intent very clear for both you the developer and your AI agent assistant.
 
@@ -256,7 +236,6 @@ The variable names clearly state what the contents are, and the intended use.
 The method name clearly states the action that is being performed. It does not take any parameters because the intended purpose of a process manager is to be initialized with all of the data it needs in order to perform the process it is managing.
 
 Do you come across code this plainly and clearly written? Maybe. It’s more than likely that it’s plain on that it uses simpler wording and phrasing that is less robust, but still clear. You may have seen `customer_to_update` and considered that good over just `customer`. Maybe you consider the one word better. But your AI agent is going to have less and less of a clear intent by using such simplified wording.
-  
 
 ## The Compounding Rewards of Enhanced Naming
 

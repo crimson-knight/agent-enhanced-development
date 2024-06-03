@@ -2,11 +2,11 @@
 
 `_This is a work in progress_`
 
-Process managers are a convention that AI agents need to organize an unRESTful process. This is commonly domain specific business logic or workflows. 
+Process managers are a convention that AI agents need to organize an unRESTful process. This is commonly domain specific business logic or workflows.
 
 A process manager is a statement or phrase that describes what is being done.
 
-Let’s use an example of building a report. We are just going to describe the feature story that defines this process, and the triggering event. For this example our app has Customers: 
+Let’s use an example of building a report. We are just going to describe the feature story that defines this process, and the triggering event. For this example our app has Customers:&#x20;
 
 `When a list of Customer ID’s is provided, then lock each customers account.`
 
