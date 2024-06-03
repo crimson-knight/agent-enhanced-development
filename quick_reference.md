@@ -1,4 +1,4 @@
-# AED - Quick Reference Cheat Sheet
+# Quick Reference - AED Cheat Sheet
 
 This is a quick reference, please read the entire guide for more details.
 
@@ -99,4 +99,21 @@ class Billing::ProcessCustomersWithExpiredPaymentMethods
 
 end
 ```
+
+## Process Manager Conventions
+
+Process managers are the starting point of your businesses internal domain-specific language (DSL).
+
+These objects are _typically_ just a plain class that is not part of a specific framework. Many frameworks have some utilities that bleed out of the framework and into your business logic for common usecase tasks.
+
+A more formal definition that encompasses what the spirit of the process manager is:
+
+`Process Manager: a starting point in a business process where a workflow of one or more steps begins and ends, with the final product being the end of the computational process for the business.`
+
+Process managers conform to the following:
+	- The `initialize` method receives all of the necessary information possible to perform the process
+		- Any necessary data organization should happen during the objects initialization step
+	- The entry point method `perform` is defined, and performs all of the methods necessary for the business task to be completed in a single method call
+		- A well written `perform` method will read almost like psuedo code when outlining each step that's being performed.
+	- Use read-only public accessor methods if the object is going to be used for anything other than returning a single result
 
