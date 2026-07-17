@@ -1,3 +1,10 @@
+> **Where AED lives now (2026):** this repo is the original 2024 write-up of the
+> Agent-Enhanced Development process — the thinking that grew into
+> [Feature-Story-Driven Development](https://agentc.consulting) and the published
+> AED code conventions. The current, maintained canon is
+> **[AgentC-Consulting/aed-conventions](https://github.com/AgentC-Consulting/aed-conventions)**
+> (signed v1.0.0), fronted by [agentc.consulting/aed](https://agentc.consulting/aed).
+
 # Agent Enhanced Development - The Whole Process
 
 ## Introduction To What A Feature Request Is
